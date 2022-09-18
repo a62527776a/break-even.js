@@ -1,29 +1,29 @@
 <template>
   <main>
     whats this?
-    <input type="range" v-model="prdRandom.price" :min="-8000" :max="8000" />
-    <div>当前盈亏：{{ prdRandom.price }}</div>
-    <div>最大盈亏：{{ prdRandom.maxPrice }}</div>
-    <div v-for="item in prdRandom.trasferWeightItems" :key="item.id">
+    <input type="range" @input="execRange" :min="-8000" :max="8000" />
+    <div>当前盈亏：{{ price }}</div>
+    <div>最大盈亏：{{ maxPrice }}</div>
+    <div v-for="item in items" :key="item.id">
       <div>初始权重 {{ item.weight }}</div>
       <div>平衡权重 {{ item.transferWeight }}</div>
       <div>
         平衡权重比例
         {{
-          ((item.transferWeight / prdRandom.totalTransferWeight) * 100).toFixed(
+          ((item.transferWeight / totalTransferWeight) * 100).toFixed(
             2
           )
         }}%
       </div>
     </div>
-    <div>{{ prdRandom.totalTransferWeight }}</div>
+    <div>{{ totalTransferWeight }}</div>
     <div class="wqdqwdqw">
       <div
-        v-for="item in prdRandom.trasferWeightItems"
+        v-for="item in items"
         class="gggg"
         :key="item.id"
         :style="`background: ${item.background};width: ${
-          (item.transferWeight / prdRandom.totalTransferWeight) * 800
+          (item.transferWeight / totalTransferWeight) * 800
         }px`"
       ></div>
     </div>
@@ -31,11 +31,14 @@
 </template>
 
 <script lang="ts">
-import { reactive, ref } from '@vue/reactivity';
+import { Ref, ref } from '@vue/reactivity';
 import { A, WeightItem } from './a';
 export default {
   setup() {
-    let price = ref(0);
+    const items: Ref<WeightItem[]> = ref([])
+    const price: Ref<Number> = ref(0)
+    const maxPrice: Ref<Number> = ref(0)
+    const totalTransferWeight: Ref<Number> = ref(0)
 
     let GoodsWeights: WeightItem[] = [
       {
@@ -80,11 +83,28 @@ export default {
       },
     ];
 
-    const prdRandom = reactive(new A(GoodsWeights, 8000));
+    const prdRandom = new A(GoodsWeights, 8000);
+
+    items.value = prdRandom.trasferWeightItems
+    maxPrice.value = prdRandom.maxPrice,
+    totalTransferWeight.value = prdRandom.totalTransferWeight
+    price.value = prdRandom.price
+
+    const execRange = (e: any) => {
+      prdRandom.price = parseInt(e.target.value)
+      items.value = prdRandom.trasferWeightItems
+      maxPrice.value = prdRandom.maxPrice,
+      totalTransferWeight.value = prdRandom.totalTransferWeight
+      price.value = prdRandom.price
+    }
 
     return {
       price,
+      execRange,
       prdRandom,
+      items,
+      maxPrice,
+      totalTransferWeight
     };
   },
 };
