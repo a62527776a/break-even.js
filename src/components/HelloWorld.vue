@@ -1,7 +1,5 @@
 <template>
   <main>
-    whats this?
-    <input type="range" @input="execRange" :min="-8000" :max="8000" />
     <div>当前盈亏：{{ price }}</div>
     <div>最大盈亏：{{ maxPrice }}</div>
     <div v-for="item in items" :key="item.id">
@@ -27,6 +25,14 @@
         }px`"
       ></div>
     </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <input type="range" @input="execRange" :min="-4000" :max="4000" />
+    盈利控制
   </main>
 </template>
 
@@ -83,7 +89,7 @@ export default {
       },
     ];
 
-    const prdRandom = new A(GoodsWeights, 8000);
+    const prdRandom = new A(GoodsWeights, 2000);
 
     items.value = prdRandom.trasferWeightItems
     maxPrice.value = prdRandom.maxPrice,
