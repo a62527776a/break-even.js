@@ -4,9 +4,10 @@ import { ref, reactive, watchEffect } from 'vue'
 interface WeightItem {
     id: any
     weight: number,
-    weightRegion?: number[]
-    transferWeight?: number
-    weightScale?: number
+    weightRegion: number[]
+    transferWeight: number
+    weightScale: number
+    background: string
 }
 
 
@@ -43,9 +44,10 @@ class B {
     public get trasferWeightItems() : WeightItem[] {
         let copyWith: WeightItem[] = JSON.parse(JSON.stringify(this.weightItems));
         this.totalTransferWeight = 0
-        copyWith.forEach((item, idx) => {
-          item.weightRegion[0]
-          item.transferWeight = item.weightRegion[0] * this.priceMatrix[0] + item.weightRegion[1] * this.priceMatrix[1]
+        copyWith.forEach((item) => {
+          if (item.weightRegion[0] && item.weightRegion[1]) {
+            item.transferWeight = item.weightRegion[0] * this.priceMatrix[0] + item.weightRegion[1] * this.priceMatrix[1]
+          }
         })
         for (let i = copyWith.length - 1; i >= 0; i--) {
           if (i != 0) {
@@ -79,22 +81,34 @@ let GoodsWeights: WeightItem[] = [
   {
     id: 1,
     weight: 1,
-    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`,
+    weightScale: 0,
+    weightRegion: [0, 0],
+    transferWeight: 0
   },
   {
     id: 2,
     weight: 9,
-    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`,
+    weightScale: 0,
+    weightRegion: [0, 0],
+    transferWeight: 0
   },
   {
     id: 3,
     weight: 30,
-    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`,
+    weightScale: 0,
+    weightRegion: [0, 0],
+    transferWeight: 0
   },
   {
     id: 4,
     weight: 60,
-    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`,
+    weightScale: 0,
+    weightRegion: [0, 0],
+    transferWeight: 0
   }
 ]
 
@@ -121,7 +135,7 @@ watchEffect(() => {
     </div>
     <div>{{prdRandom.totalTransferWeight}}</div>
     <div class="wqdqwdqw">
-      <div v-for="item in prdRandom.trasferWeightItems" class="gggg" :key="item.id" :style="`background: ${item.background};width: ${(item.transferWeight / prdRandom.totalTransferWeight) * 800}px`"></div>
+      <div v-for="item in prdRandom.trasferWeightItems" class="gggg" :key="item.id" :style="`background: ${item.background};width: ${(item?.transferWeight / prdRandom.totalTransferWeight) * 800}px`"></div>
     </div>
     <!-- <div @click="get">随机一次</div>
     <div @click="getTen">随机十次</div>
