@@ -1,99 +1,40 @@
 <template>
   <main>
     whats this?
-    <input type="range" v-model="price" :min="-2500" :max="2500">
-    <div>当前盈亏：{{price}}</div>
-    <div>最大盈亏：{{prdRandom.maxPrice}}</div>
+    <input type="range" v-model="prdRandom.price" :min="-8000" :max="8000" />
+    <div>当前盈亏：{{ prdRandom.price }}</div>
+    <div>最大盈亏：{{ prdRandom.maxPrice }}</div>
     <div v-for="item in prdRandom.trasferWeightItems" :key="item.id">
-      <div>初始权重 {{item.weight}}</div>
-      <div>平衡权重 {{item.transferWeight}}</div>
-      <div>平衡权重比例 {{((item.transferWeight / prdRandom.totalTransferWeight) * 100).toFixed(2)}}%</div>
+      <div>初始权重 {{ item.weight }}</div>
+      <div>平衡权重 {{ item.transferWeight }}</div>
+      <div>
+        平衡权重比例
+        {{
+          ((item.transferWeight / prdRandom.totalTransferWeight) * 100).toFixed(
+            2
+          )
+        }}%
+      </div>
     </div>
-    <div>{{prdRandom.totalTransferWeight}}</div>
+    <div>{{ prdRandom.totalTransferWeight }}</div>
     <div class="wqdqwdqw">
-      <div v-for="item in prdRandom.trasferWeightItems" class="gggg" :key="item.id" :style="`background: ${item.background};width: ${(item.transferWeight / prdRandom.totalTransferWeight) * 800}px`"></div>
+      <div
+        v-for="item in prdRandom.trasferWeightItems"
+        class="gggg"
+        :key="item.id"
+        :style="`background: ${item.background};width: ${
+          (item.transferWeight / prdRandom.totalTransferWeight) * 800
+        }px`"
+      ></div>
     </div>
   </main>
 </template>
 
 <script lang="ts">
-import { reactive, ref } from "@vue/reactivity";
-import { watchEffect } from '@vue/runtime-core';
+import { reactive, ref } from '@vue/reactivity';
+import { A, WeightItem } from './a';
 export default {
   setup() {
-    interface WeightItem {
-      id: any;
-      weight: number;
-      weightRegion: number[];
-      transferWeight: number;
-      weightScale: number;
-      background: string;
-    }
-
-    class B {
-      weightItems: WeightItem[] = [];
-
-      price: number = 0;
-      maxPrice: number = 0;
-
-      totalWeight: number = 0;
-
-      totalTransferWeight: number = 0;
-
-      constructor(weightItems: WeightItem[], maxPrice: number) {
-        this.initWeightItem(weightItems);
-        this.maxPrice = maxPrice;
-      }
-
-      public set setPrice(price: number) {
-        this.price = price;
-      }
-
-      public get priceMatrix(): number[] {
-        let scale = this.price / this.maxPrice;
-        return [0 - scale, 1 + scale];
-      }
-
-      public get trasferWeightItems(): WeightItem[] {
-        let copyWith: WeightItem[] = JSON.parse(
-          JSON.stringify(this.weightItems)
-        );
-        this.totalTransferWeight = 0;
-        copyWith.forEach((item) => {
-          item.transferWeight =
-            item.weightRegion[0] * this.priceMatrix[0] +
-            item.weightRegion[1] * this.priceMatrix[1];
-        });
-        for (let i = copyWith.length - 1; i >= 0; i--) {
-          if (i != 0) {
-            copyWith[i].transferWeight =
-              copyWith[i].transferWeight - copyWith[i - 1].transferWeight;
-          }
-          this.totalTransferWeight += copyWith[i].transferWeight;
-        }
-        return copyWith;
-      }
-
-      initWeightItem(weightItems: WeightItem[]) {
-        weightItems = weightItems.sort((a, b) => {
-          return b.weight - a.weight;
-        });
-        let lastWeight = 0;
-        weightItems.every((a) => {
-          this.totalWeight = a.weight;
-        });
-        for (let i = 0; i < weightItems.length; i++) {
-          weightItems[i].weightRegion = [
-            lastWeight,
-            weightItems[i].weight + lastWeight,
-          ];
-          lastWeight = weightItems[i].weight + lastWeight;
-        }
-
-        this.weightItems = weightItems;
-      }
-    }
-
     let price = ref(0);
 
     let GoodsWeights: WeightItem[] = [
@@ -139,16 +80,12 @@ export default {
       },
     ];
 
-    const prdRandom = reactive(new B(GoodsWeights, 2000));
-
-    watchEffect(() => {
-      prdRandom.setPrice = price.value;
-    });
+    const prdRandom = reactive(new A(GoodsWeights, 8000));
 
     return {
       price,
       prdRandom,
-    }
+    };
   },
 };
 </script>
